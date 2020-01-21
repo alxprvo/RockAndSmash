@@ -22,13 +22,14 @@ public class GameMaster : MonoBehaviour
 
         foreach (GameObject border in borders)
         {
-            if (border.name == borders[indexNumber].name)
+            if (border == borders[indexNumber])
             {
                 border.GetComponent<Image>().color = Color.green;
+
             } else
             {
                 border.GetComponent<Image>().color = Color.red;
-
+        
             }
         }
     }

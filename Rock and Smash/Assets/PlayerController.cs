@@ -4,18 +4,40 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    [SerializeField] float smashingSpeed = 10f;
+
+
+    bool mfActive = true;
+
     GameObject movingSpace;
+    Rigidbody2D rBody;
+
+    
 
     void Start()
     {
         movingSpace = GameObject.FindGameObjectWithTag("movingSpace");
 
+        rBody = gameObject.GetComponent<Rigidbody2D>();
         //Debug.Log("Height: " + movingSpace.GetComponent<RectTransform>().sizeDelta.y + " Width: " + movingSpace.GetComponent<RectTransform>().sizeDelta.x);
     }
 
     void Update()
     {
-        FollowCursor();
+        
+
+        if (mfActive)
+        {
+            FollowCursor();
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+        {
+            mfActive = false;
+
+            Smash();
+        }
     }
 
     void FollowCursor () {
@@ -25,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        Vector3 mouseFollow = Vector2.Lerp(transform.position, mousePosition, 10000000f);
+        Vector3 mouseFollow = Vector2.Lerp(transform.position, mousePosition, 10f);
 
         //float clampX = Mathf.Clamp(mouseFollow.x, movingSpaceWidth / 2 * -1, movingSpaceWidth / 2);
         //float clampY = Mathf.Clamp(mouseFollow.y, movingSpaceHeight / 2 * -1, movingSpaceHeight / 2);
@@ -35,5 +57,36 @@ public class PlayerController : MonoBehaviour
 
         transform.position = new Vector3(clampX, clampY);
      
+    }
+
+    void Smash()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            rBody.velocity = Vector2.up * smashingSpeed;
+
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            rBody.velocity = Vector2.left * smashingSpeed;
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            rBody.velocity = Vector2.down * smashingSpeed;
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            rBody.velocity = Vector2.right * smashingSpeed;
+        }
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D coll)
+    {
+
+        if (coll.tag == "Border")
+        {
+            mfActive = true;
+        }
     }
 }
